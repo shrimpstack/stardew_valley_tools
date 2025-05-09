@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>NPC 你到底在哪</title>
+    <script>const time_table = {};</script>
+    <script src="time_table_阿比蓋爾.js"></script>
+    <script src="time_table_艾蜜莉.js"></script>
+    <script src="time_table_海莉.js"></script>
+    <script src="time_table_莉亞.js"></script>
+    <script src="time_table_瑪魯.js"></script>
+    <script src="time_table_潘妮.js"></script>
+    <style>
+      body { margin: 0; }
+      #main {
+        display: grid;
+        grid-template-columns: auto 1fr;
+      }
+      /* ================================ */
+      /*  條件列                          */
+      /* ================================ */
+      .列 {
+        display: flex;
+        gap: 8px;
+        padding: 8px;
+      }
+      .列 div {
+        width: 56px;
+        height: 40px;
+        background: url(./邊框.png), var(--bg) no-repeat center;
+        cursor: pointer;
+      }
+      .列 div:not(.selected) {
+        filter: grayscale(1) opacity(.8);
+      }
+      #天氣 [天氣="微風"] {
+        --bg: url(./天氣_微風_春.png);
+      }
+      #季節:has([季節="秋"].selected) ~ #天氣 [天氣="微風"] {
+        --bg: url(./天氣_微風_秋.png);
+      }
+      #天氣:not(.節日) [天氣="節日"], #天氣:is(.節日) :not([天氣="節日"]) {
+        display: none;
+      }
+      #快速列 {
+        display: flex;
+        gap: 16px;
+        padding: 8px;
+      }
+
+      /* ================================ */
+      /*  日程                            */
+      /* ================================ */
+      .time_table {
+        background: #eee;
+        margin: 16px;
+        padding: 16px;
+        display: grid;
+        gap: 8px;
+        grid-template-columns: 80px 1fr;
+        align-items: center;
+      }
+      .time_title {
+        grid-column: 2 span;
+      }
+
+      /* ================================ */
+      /*  月曆                            */
+      /* ================================ */
+      #月曆 {
+        width: 480px;
+        height: 336px;
+        display: grid;
+        grid-template-columns: repeat(7, auto);
+        gap: 6px;
+        padding: 68px 18px 18px 20px;
+        box-sizing: border-box;
+      }
+      #月曆[季節="春"] { background: url(./月曆_春.png); }
+      #月曆[季節="夏"] { background: url(./月曆_夏.png); }
+      #月曆[季節="秋"] { background: url(./月曆_秋.png); }
+      #月曆[季節="冬"] { background: url(./月曆_冬.png); }
+      #月曆 div {
+        width: 100%;
+        height: 100%;
+        border: 3px solid #0000;
+        box-sizing: border-box;
+        cursor: pointer;
+      }
+      #月曆 div:hover {
+        border-color: #a3d3ffb3;
+      }
+      #月曆 div.selected {
+        border-color: #19e11988;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="main">
+      <div id="選擇">
+        <div id="條件列">
+          <div id="季節" class="列"></div>
+          <div id="天氣" class="列"></div>
+          <div id="快速列">
+            <select id="誰"></select>
+            <label><input id="海邊橋梁修復" type="checkbox" checked><span>海邊橋梁</span></label>
+            <label><input id="巴士站修復" type="checkbox"><span>巴士站</span></label>
+            <label><input id="社區中心修復" type="checkbox"><span>社區中心</span></label>
+          </div>
+        </div>
+        <div id="月曆" 季節="春"></div>
+      </div>
+      <div id="日程"></div>
+    </main>
+    <script>
+      window.addEventListener("load", () => {
+        初始創建();
+        找();
+      });
+      function 找() {
+        let 結果 = 取得結果();
+        日程.innerHTML = "";
+        結果.forEach(時間表 => {
+          let 一張 = document.createElement("div");
+          一張.classList.add("time_table");
+          時間表.forEach(一行時間 => {
+            if(typeof 一行時間 == "string") {
+              let 小標題 = document.createElement("div");
+              小標題.classList.add("time_title");
+              小標題.innerText = 一行時間;
+              一張.append(小標題);
+            }
+            else {
+              let 時間 = document.createElement("div");
+              時間.classList.add("time");
+              時間.innerText = 一行時間[0];
+              let 位置 = document.createElement("div");
+              位置.classList.add("time_cnt");
+              位置.innerText = 一行時間[1];
+              一張.append(時間, 位置);
+            }
+          });
+          日程.append(一張);
+        });
+      }
+      function 取得結果() {
+        let 選誰 = 誰.value;
+        let 指定季節 = 季節.querySelector(".selected").getAttribute("季節");
+        let 指定天氣 = 天氣.querySelector(".selected").getAttribute("天氣");
+        let 指定日期 = +月曆.querySelector(".selected").getAttribute("日期");
+        let 指定星期 = 月曆.querySelector(".selected").getAttribute("星期");
+        let 檢查結果 = time_table[選誰].map((row, i) => {
+          let 檢查 = {};
+          if(row.疊加) 檢查.疊加 = true;
+          if(row.天氣 == "苔雨") 檢查.天氣 = 指定天氣 == row.天氣;
+          else if(row.天氣 == "雨天") 檢查.天氣 = /雨/.test(指定天氣);
+          if(row.季節) {
+            if(Array.isArray(row.季節)) 檢查.季節 = row.季節.includes(指定季節);
+            else 檢查.季節 = 指定季節 == row.季節;
+          }
+          if(row.日期) {
+            if(Array.isArray(row.日期)) {
+              if(typeof row.日期[0] == "string") 檢查.星期 = row.日期.includes("星期" + 指定星期);
+              else 檢查.日期 = row.日期.includes(指定日期);
+            }
+            else if(typeof row.日期 == "string") 檢查.星期 = "星期" + 指定星期 == row.日期;
+            else 檢查.日期 = 指定日期 == row.日期;
+          }
+          if(row.修復) { 檢查.修復 = 快速列.querySelector(`#${row.修復}修復`).checked; }
+          return {檢查, i};
+        })
+        .filter(({檢查}) => !Object.values(檢查).includes(false))
+        .map(({檢查, i}) => {
+          let 權重 = 0;
+          if(!檢查.疊加) 權重 += 100;
+          if(檢查.季節) 權重 += 1;
+          if(檢查.星期) 權重 += 4;
+          if(檢查.天氣) 權重 += 10;
+          if(檢查.日期) 權重 += 20;
+          if(檢查.修復) 權重 += 1;
+          return {權重, i};
+        }).sort((a, b) => b.權重 - a.權重)
+        .filter(({權重}, index) => !index || 權重 < 100)
+        .map(({i}) => time_table[選誰][i].時間表);
+        return 檢查結果;
+      }
+      function 初始創建() {
+        for(let f=0; f<28; f++) {
+          let cell = document.createElement("div");
+          cell.setAttribute("日期", f + 1);
+          cell.setAttribute("星期", "一二三四五六日"[f % 7]);
+          設為單選按鈕(cell);
+          月曆.append(cell);
+        }
+        "春夏秋冬".split("").forEach(季 => {
+          let 季btn = document.createElement("div");
+          季btn.setAttribute("季節", 季);
+          季btn.style.setProperty("--bg", `url(./季節_${季}.png)`);
+          設為單選按鈕(季btn);
+          季節.append(季btn);
+        });
+        ["晴天", "雨天", "微風", "暴風雨", "苔雨", "下雪", "節日"].forEach(氣 => {
+          let 氣btn = document.createElement("div");
+          氣btn.setAttribute("天氣", 氣);
+          if(氣 != "微風") 氣btn.style.setProperty("--bg", `url(./天氣_${氣}.png)`);
+          設為單選按鈕(氣btn);
+          天氣.append(氣btn);
+        });
+        Object.keys(time_table).forEach(名 => {
+          let 誰opt = document.createElement("option");
+          誰opt.value = 名;
+          誰opt.innerText = 名;
+          誰.append(誰opt);
+        });
+        誰.addEventListener("change", 找);
+        快速列.querySelectorAll('input').forEach(input => input.addEventListener("change", 找));
+        月曆.querySelector('[日期="1"]').classList.add("selected");
+        季節.querySelector('[季節="春"]').classList.add("selected");
+        天氣.querySelector('[天氣="晴天"]').classList.add("selected");
+      }
+      function 設為單選按鈕(btn) {
+        btn.addEventListener("click", () => {
+          if(btn.matches(".selected")) return;
+          let selected = btn.parentElement.querySelector(".selected");
+          if(selected) selected.classList.remove("selected");
+          btn.classList.add("selected");
+          找();
+        });
+      }
+    </script>
+  </body>
+</html>
