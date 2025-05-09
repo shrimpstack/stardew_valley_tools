@@ -145,6 +145,7 @@
       function 取得結果() {
         let 選誰 = 誰.value;
         let 指定季節 = 季節.querySelector(".selected").getAttribute("季節");
+        月曆.setAttribute("季節", 指定季節);
         let 指定天氣 = 天氣.querySelector(".selected").getAttribute("天氣");
         let 指定日期 = +月曆.querySelector(".selected").getAttribute("日期");
         let 指定星期 = 月曆.querySelector(".selected").getAttribute("星期");
