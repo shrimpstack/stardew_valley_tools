@@ -9,6 +9,9 @@
     <script src="time_table_莉亞.js"></script>
     <script src="time_table_瑪魯.js"></script>
     <script src="time_table_潘妮.js"></script>
+    <script src="time_table_阿嬤.js"></script>
+    <script src="time_table_謝恩.js"></script>
+    <script src="time_table_卡洛琳.js"></script>
     <style>
       body { margin: 0; }
       #main {
@@ -188,7 +191,7 @@
         for(let f=0; f<28; f++) {
           let cell = document.createElement("div");
           cell.setAttribute("日期", f + 1);
-          cell.setAttribute("星期", "一二三四五六日"[f % 7]);
+          cell.setAttribute("星期", "一二三四五六天"[f % 7]);
           設為單選按鈕(cell);
           月曆.append(cell);
         }
