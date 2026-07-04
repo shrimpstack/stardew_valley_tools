@@ -90,6 +90,7 @@
         border: 3px solid #0000;
         box-sizing: border-box;
         cursor: pointer;
+        display: grid;
       }
       #月曆 div:hover {
         border-color: #a3d3ffb3;
@@ -97,6 +98,32 @@
       #月曆 div.selected {
         border-color: #19e11988;
       }
+      #月曆 div:hover:after {
+        position: absolute;
+        justify-self: center;
+        align-self: center;
+        background: #fbebc2;
+        padding: 2px 8px;
+        border: 2px solid #0e0e0e;
+      }
+      [季節="春"] [日期="13"]:hover:after { content: "復活節"; }
+      [季節="春"] [日期="15"]:hover:after { content: "沙漠節"; }
+      [季節="春"] [日期="16"]:hover:after { content: "沙漠節"; }
+      [季節="春"] [日期="17"]:hover:after { content: "沙漠節"; }
+      [季節="春"] [日期="24"]:hover:after { content: "花舞節"; }
+      [季節="夏"] [日期="11"]:hover:after { content: "夏威夷宴會"; }
+      [季節="夏"] [日期="20"]:hover:after { content: "鱒魚大賽"; }
+      [季節="夏"] [日期="21"]:hover:after { content: "鱒魚大賽"; }
+      [季節="夏"] [日期="28"]:hover:after { content: "月光水母起舞"; }
+      [季節="秋"] [日期="16"]:hover:after { content: "星露谷展覽會"; }
+      [季節="秋"] [日期="27"]:hover:after { content: "萬靈節"; }
+      [季節="冬"] [日期="8"]:hover:after { content: "冰雪節"; }
+      [季節="冬"] [日期="12"]:hover:after { content: "魷魚節"; }
+      [季節="冬"] [日期="13"]:hover:after { content: "魷魚節"; }
+      [季節="冬"] [日期="15"]:hover:after { content: "夜市"; }
+      [季節="冬"] [日期="16"]:hover:after { content: "夜市"; }
+      [季節="冬"] [日期="17"]:hover:after { content: "夜市"; }
+      [季節="冬"] [日期="25"]:hover:after { content: "冬日星盛宴"; }
     </style>
   </head>
   <body>
